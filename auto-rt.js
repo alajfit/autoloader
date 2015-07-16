@@ -2,7 +2,7 @@
 rtAuto.load = (function(){
 	$(window).load(function() {
 		// Data from the customer
-		if ( rtAuto.num != null && rtAuto.ele != null && rtAuto.co != null ) {
+		if ( rtAuto.num !== null && rtAuto.ele !== null && rtAuto.co !== null ) {
 			var countryC = true;
 			switch (rtAuto.co) {
 				case 'es':
@@ -19,90 +19,98 @@ rtAuto.load = (function(){
 				var $AA=[]; // Active array for numbers found
 				// find out which placeholders we need to build based on what is found on the page
 				$.each($searchList, function( key, value ){
-					if($searchList[key]!='body'){
-						var $search = $searchList[key];
-					    $($search).each(function() {
-					        $cache = $(this);
-					        var $allElements = $cache.text().match($country);
-							if($allElements) { // checking elements have been found
-								$.each($allElements, function( key, value ) {
-									var $content = $allElements[key].split(' ').join('');
-									Object.keys($rL).forEach(function(key) { // get dest and rt num
-										var $num = key.split(' ').join(''), $rlK = $rL[key]; var $check = true;
-									    if($content == $num) {
-											if(jQuery.isEmptyObject($AA)) {
-												$AA.push({$tNum:$num, $rt:$rlK});
-											} else {
-												Object.keys($AA).forEach(function(key) {
-													if($AA[key]["$tNum"] == $content) { $check = false; }
-												}); if($check == true) { $AA.push({$tNum:$num, $rt:$rlK});}
-											}
-										}
-									});
-								});
-							}
-						});
-					}
+					var $search = $searchList[key];
+				    $($search).each(function() {
+				      var $cache = $(this);
+				      var $allElements = $cache.text().match($country);
+  						if($allElements) { // checking elements have been found
+  							$.each($allElements, function( key, value ) {
+  								var $content = $allElements[key].split(' ').join('');
+  								Object.keys($rL).forEach(function(key) { // get dest and rt num
+  									var $num = key.split(' ').join(''), $rlK = $rL[key]; var $check = true;
+  								    if($content == $num) {
+  										if(jQuery.isEmptyObject($AA)) {
+  											$AA.push({$tNum:$num, $rt:$rlK});
+  										} else {
+  											Object.keys($AA).forEach(function(key) {
+  												if($AA[key].$tNum == $content) { $check = false; }
+  											}); if($check === true) { $AA.push({$tNum:$num, $rt:$rlK});}
+  										}
+  									}
+  								});
+  							});
+  						}
+					});
 				});
 
 				// create and hide the placeholders of all required numbers
-	            $(document.body).append('<span id="rt"></span>'); $hold = $("#rt"), $checkExist = [];
-	            Object.keys($AA).forEach(function(key) { // get dest and rt num
-	                var check = false;
-	                var $keyHolder = key;
-	                if ($checkExist.length > 0) {
-	                    $.each($checkExist, function( key, value ){
-	                        if($checkExist[key] == $AA[$keyHolder]["$rt"]) {
-	                            check = true;
-	                        }
-	                    });
-	                };
-	                if(check == false) {
-	                    $hold.append('<span class="'+$AA[key]["$rt"]+'" style="display:none;"></span>');
-	                    $checkExist.push($AA[key]["$rt"]);
-	                }
-	            });
+				$(document.body).append('<span id="rt"></span>'); var $hold = $("#rt"), $checkExist = [];
+				Object.keys($AA).forEach(function(key) { // get dest and rt num
+					var check = false;
+          var checKey = key;
+					if($checkExist!==null) {
+            $.each($checkExist, function( key, value ) {
+              if($checkExist[key] == $AA[checKey].$rt) {
+                check = true;
+              }
+            });
+            if(check === false) {
+  						$hold.append('<span class="'+$AA[key].$rt+'" style="display:none;"></span>');
+  						$checkExist.push($AA[key].$rt);
+  					}
+          }
+				});
 
 				// Get all required numbers from the server
 				rTapNotifyDOMChange(document.getElementById("rt"));
 
 				// Gather up all the numbers returned
-				$xRT = 0, $run = $checkExist.length*2;
+				var $xRT = 0, $run = $checkExist.length*2, $ran = false;
 				$("#rt").bind("DOMSubtreeModified", function() {
 					$xRT++;
-					if($xRT==$run) {
+					if($xRT>=$run && $ran === false) {
 						Object.keys($AA).forEach(function(key) {
-							$AA[key]["$new"] =  $('.'+$AA[key]["$rt"]+'').text();
+               var $catcher = $('.'+$AA[key].$rt+'').text();
+              if($catcher != "t" && $catcher !== "" && $catcher != " ") {
+						    $AA[key].$new = $catcher;
+              }
 						});
-						$finishAndReplace();
+            // need to do a check for not null
+            var $runCatch = true;
+            Object.keys($AA).forEach(function(key) {
+              if($AA[key].$new === undefined) {
+                $runCatch=false;
+              }
+            });
+            if($runCatch === true) {
+              $finishAndReplace();
+              $ran = true;
+            }
 					}
 				});
 
 				// Replace all numbers on the page
 				var $finishAndReplace = function() {
 					$.each($searchList, function( key, value ){
-						if($searchList[key] != 'body') {
-							var $search = $searchList[key];
-							$($search).each(function() {
-								$cache = $(this);
-								var $allElements = $cache.text().match($country);
-								if($allElements) { // checking elements have been found
-									$.each($allElements, function( key, value ) {
-										var $replace = $allElements[key];
-										var $found = $allElements[key].split(' ').join('');
-										Object.keys($AA).forEach(function(key) {
-											if($found == $AA[key]["$tNum"]) {
-												var $re = new RegExp($replace,"g");
-						                        var replaced = $cache.html().replace($re, $AA[key]["$new"]);
-						                        $cache.html(replaced);
-											}
-										});
+						var $search = $searchList[key];
+						$($search).each(function() {
+							var $cache = $(this);
+							var $allElements = $cache.text().match($country);
+							if($allElements) { // checking elements have been found
+								$.each($allElements, function( key, value ) {
+									var $replace = $allElements[key];
+									var $found = $allElements[key].split(' ').join('');
+									Object.keys($AA).forEach(function(key) {
+										if($found == $AA[key].$tNum) {
+											var $re = new RegExp($replace,"g");
+					            var replaced = $cache.html().replace($re, $AA[key].$new);
+					            $cache.html(replaced);
+										}
 									});
-								}
-							});
-						}
+								});
+							}
+						});
 					});
-					document.cookie="rtAuto=1; expires=0; path=/";
 				};
 			} else { window.console && console.log("Error: This country has not been provisioned yet");  }
 		} else { window.console && console.log("Error: Missing elements, country or numbers"); }
