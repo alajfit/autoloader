@@ -21,8 +21,8 @@ rtAuto.load = (function(){
 				$.each($searchList, function( key, value ){
 					var $search = $searchList[key];
 				    $($search).each(function() {
-				      var $cache = $(this);
-				      var $allElements = $cache.text().match($country);
+				    	var $cache = $(this);
+				      	var $allElements = $cache.text().match($country);
   						if($allElements) { // checking elements have been found
   							$.each($allElements, function( key, value ) {
   								var $content = $allElements[key].split(' ').join('');
