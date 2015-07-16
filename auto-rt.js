@@ -22,9 +22,9 @@ rtAuto.load = (function(){
 					var $search = $searchList[key];
 				    $($search).each(function() {
 				    	var $cache = $(this);
-				      	var $allElements = $cache.text().match($country);
-  						if($allElements) { // checking elements have been found
-  							$.each($allElements, function( key, value ) {
+				    	var $allElements = $cache.text().match($country);
+						if($allElements) { // checking elements have been found
+							$.each($allElements, function( key, value ) {
   								var $content = $allElements[key].split(' ').join('');
   								Object.keys($rL).forEach(function(key) { // get dest and rt num
   									var $num = key.split(' ').join(''), $rlK = $rL[key]; var $check = true;
@@ -33,8 +33,13 @@ rtAuto.load = (function(){
   											$AA.push({$tNum:$num, $rt:$rlK});
   										} else {
   											Object.keys($AA).forEach(function(key) {
-  												if($AA[key].$tNum == $content) { $check = false; }
-  											}); if($check === true) { $AA.push({$tNum:$num, $rt:$rlK});}
+  												if($AA[key].$tNum == $content) {
+													$check = false;
+												}
+  											});
+											if($check === true) {
+												$AA.push({$tNum:$num, $rt:$rlK});
+											}
   										}
   									}
   								});
@@ -47,18 +52,18 @@ rtAuto.load = (function(){
 				$(document.body).append('<span id="rt"></span>'); var $hold = $("#rt"), $checkExist = [];
 				Object.keys($AA).forEach(function(key) { // get dest and rt num
 					var check = false;
-          var checKey = key;
+        			var checKey = key;
 					if($checkExist!==null) {
-            $.each($checkExist, function( key, value ) {
-              if($checkExist[key] == $AA[checKey].$rt) {
-                check = true;
-              }
-            });
-            if(check === false) {
-  						$hold.append('<span class="'+$AA[key].$rt+'" style="display:none;"></span>');
-  						$checkExist.push($AA[key].$rt);
-  					}
-          }
+            			$.each($checkExist, function( key, value ) {
+            				if($checkExist[key] == $AA[checKey].$rt) {
+                				check = true;
+            				}
+            			});
+            			if(check === false) {
+							$hold.append('<span class="'+$AA[key].$rt+'" style="display:none;"></span>');
+							$checkExist.push($AA[key].$rt);
+						}
+        			}
 				});
 
 				// Get all required numbers from the server
@@ -70,22 +75,22 @@ rtAuto.load = (function(){
 					$xRT++;
 					if($xRT>=$run && $ran === false) {
 						Object.keys($AA).forEach(function(key) {
-               var $catcher = $('.'+$AA[key].$rt+'').text();
-              if($catcher != "t" && $catcher !== "" && $catcher != " ") {
-						    $AA[key].$new = $catcher;
-              }
+            				var $catcher = $('.'+$AA[key].$rt+'').text();
+            				if($catcher != "t" && $catcher !== "" && $catcher != " ") {
+								$AA[key].$new = $catcher;
+            				}
 						});
-            // need to do a check for not null
-            var $runCatch = true;
-            Object.keys($AA).forEach(function(key) {
-              if($AA[key].$new === undefined) {
-                $runCatch=false;
-              }
-            });
-            if($runCatch === true) {
-              $finishAndReplace();
-              $ran = true;
-            }
+            			// need to do a check for not null
+            			var $runCatch = true;
+            			Object.keys($AA).forEach(function(key) {
+            				if($AA[key].$new === undefined) {
+            					$runCatch=false;
+            				}
+            			});
+            			if($runCatch === true) {
+            				$finishAndReplace();
+            				$ran = true;
+            			}
 					}
 				});
 
@@ -103,8 +108,8 @@ rtAuto.load = (function(){
 									Object.keys($AA).forEach(function(key) {
 										if($found == $AA[key].$tNum) {
 											var $re = new RegExp($replace,"g");
-					            var replaced = $cache.html().replace($re, $AA[key].$new);
-					            $cache.html(replaced);
+					            			var replaced = $cache.html().replace($re, $AA[key].$new);
+					            			$cache.html(replaced);
 										}
 									});
 								});
