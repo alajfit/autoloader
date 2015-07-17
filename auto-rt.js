@@ -6,7 +6,7 @@ rtAuto.load = (function(){
 			var countryC = true;
 			switch (rtAuto.co) {
 				case 'es':
-					var $country = new RegExp("([0-9]{2} ?[0-9]{3} ?[0-9]{2} ?[0-9]{2})|([0-9]{2,} ?[0-9]{3,} ?[0-9]{2,})","g");
+					var $country = new RegExp("\b([0-9]{2} ?[0-9]{3} ?[0-9]{2} ?[0-9]{2})|([0-9]{2,} ?[0-9]{3,} ?[0-9]{2,})\b","g");
 					break;
 				default:
 					countryC = false;
