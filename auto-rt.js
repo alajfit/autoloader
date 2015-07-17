@@ -6,7 +6,7 @@ rtAuto.load = (function(){
 			var countryC = true;
 			switch (rtAuto.co) {
 				case 'es':
-					var $country = new RegExp("\b([0-9]{2} ?[0-9]{3} ?[0-9]{2} ?[0-9]{2})|([0-9]{2,} ?[0-9]{3,} ?[0-9]{2,})\b","g");
+					var $country = new RegExp("\\b([0-9]{2}( |-|\\.)?[0-9]{3}( |-|\\.)?[0-9]{2}( |-|\\.)?[0-9]{2})\\b|\\b([0-9]{2,}( |-|\\.)?[0-9]{3,}( |-|\\.)?[0-9]{2,})\\b","g");
 					break;
 				default:
 					countryC = false;
@@ -117,7 +117,7 @@ rtAuto.load = (function(){
 						});
 					});
 				};
-			} else { window.console && console.log("Error: This country has not been provisioned yet");  }
-		} else { window.console && console.log("Error: Missing elements, country or numbers"); }
+			} else { window.console && console.log("Error: Country N/A");  }
+		} else { window.console && console.log("Error: Var Err"); }
 	});
 })();
