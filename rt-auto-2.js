@@ -8,12 +8,17 @@ rtAuto.load = (function(){
 				case 'es':
 					var $country = new RegExp("([0-9]{2}( |-|\\.)?[0-9]{3}( |-|\\.)?[0-9]{2}( |-|\\.)?[0-9]{2})\\b|([0-9]{2,}( |-|\\.)?[0-9]{3,}( |-|\\.)?[0-9]{2,})\\b","g");
 					break;
+				case 'uk':
+					var $country = new RegExp("((\\+44|0([1-9]{1})[0-9]{1,})( \\(0\\)|\\(0\\)| |-|\\.)?[0-9]{2,}( |-|\\.)?[0-9]{2,}( |-|\\.)?[0-9]{2,})\\b|((\\(0|0)([1-9]{1})[0-9]{1,}(\\) | |-|\\.)?[0-9]{3,}( |-|\\.)?[0-9]{3,})\\b","g");
+					break;
+				case 'be':
+					var $country = new RegExp("\\b0([1-9]{1})[0-9]{0,}( |)?[0-9]{2,3}( |)?[0-9]{2}( |)?[0-9]{2}\\b|\\b0([7-9]{1})[0-9]{1,}( |)?[0-9]{2,3}( |)?[0-9]{2,3}\\b","g");
+					break;
 				default:
 					countryC = false;
 					break;
 			}
 			if (countryC) {
-				var start = performance.now();
 				var $rL = rtAuto.num;
 				var $searchList = rtAuto.ele; // Where to search from, this can be a class, id or element e.g. body
 
@@ -44,9 +49,7 @@ rtAuto.load = (function(){
 						});
 					});
 				}
-				console.log("Initial Number Search : "+(Math.round(performance.now() - start))+ "ms");
 
-				start = performance.now();
 				// create and hide the placeholders of all required numbers
 				$(document.body).append('<span id="rt"></span>'); var $hold = $("#rt"), $checkExist = [];
 				Object.keys($AA).forEach(function(key) { // get dest and rt num
@@ -64,8 +67,8 @@ rtAuto.load = (function(){
 						}
         			}
 				});
-				console.log("Build Elements : "+(Math.round(performance.now() - start))+ "ms");
-				start = performance.now();
+
+				var start = performance.now();
 				// Get all required numbers from the server
 				rTapNotifyDOMChange(document.getElementById("rt"));
 
@@ -97,7 +100,6 @@ rtAuto.load = (function(){
 
 				// Replace all numbers on the page
 				var $finishAndReplace = function() {
-					start = performance.now();
 					$.each($searchList, function( key, value ){
 						var $search = $searchList[key];
 						$($search).each(function() {
@@ -106,7 +108,7 @@ rtAuto.load = (function(){
 							if($allElements) { // checking elements have been found
 								$.each($allElements, function( key, value ) {
 									var $replace = $allElements[key];
-									var $found = $allElements[key].split(' ').join('');
+									var $found = $allElements[key].split(' ').join('').split('.').join('');
 									Object.keys($AA).forEach(function(key) {
 										if($found == $AA[key].$tNum) {
 											var $re = new RegExp($replace,"g");
@@ -118,7 +120,6 @@ rtAuto.load = (function(){
 							}
 						});
 					});
-					console.log("Replacement complete : "+(Math.round(performance.now() - start))+ "ms");
 					if (typeof rtAutoCallback == 'function') { rtAutoCallback(); }
 				};
 			} else { window.console && console.log("Error: Country N/A");  }
