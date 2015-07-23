@@ -18,36 +18,32 @@ rtAuto.load = (function(){
 				var $searchList = rtAuto.ele; // Where to search from, this can be a class, id or element e.g. body
 
 				var $AA=[]; // Active array for numbers found
-				// find out which placeholders we need to build based on what is found on the page
-				$.each($searchList, function( key, value ){
-					var $search = $searchList[key];
-				    $($search).each(function() {
-				    	var $cache = $(this);
-				    	var $allElements = $cache.text().match($country);
-						if($allElements) { // checking elements have been found
-							$.each($allElements, function( key, value ) {
-  								var $content = $allElements[key].split(' ').join('');
-  								Object.keys($rL).forEach(function(key) { // get dest and rt num
-  									var $num = key.split(' ').join(''), $rlK = $rL[key]; var $check = true;
-  								    if($content == $num) {
-  										if(jQuery.isEmptyObject($AA)) {
-  											$AA.push({$tNum:$num, $rt:$rlK});
-  										} else {
-  											Object.keys($AA).forEach(function(key) {
-  												if($AA[key].$tNum == $content) {
-													$check = false;
-												}
-  											});
-											if($check === true) {
-												$AA.push({$tNum:$num, $rt:$rlK});
-											}
-  										}
-  									}
-  								});
-  							});
-  						}
+		    	var $cache = $("*").text();
+				var $remover = new RegExp("'num[^]*}", "g");
+				$cache = $cache.replace($remover, "");
+		    	var $allElements = $cache.match($country);
+				if($allElements) { // checking elements have been found
+					$.each($allElements, function( key, value ) {
+						var $content = $allElements[key].split(' ').join('');
+						Object.keys($rL).forEach(function(key) { // get dest and rt num
+							var $num = key.split(' ').join(''), $rlK = $rL[key]; var $check = true;
+						    if($content == $num) {
+								if(jQuery.isEmptyObject($AA)) {
+									$AA.push({$tNum:$num, $rt:$rlK});
+								} else {
+									Object.keys($AA).forEach(function(key) {
+										if($AA[key].$tNum == $content) {
+										$check = false;
+									}
+									});
+								if($check === true) {
+									$AA.push({$tNum:$num, $rt:$rlK});
+								}
+								}
+							}
+						});
 					});
-				});
+				}
 				console.log("Initial Number Search : "+(Math.round(performance.now() - start))+ "ms");
 
 				start = performance.now();
