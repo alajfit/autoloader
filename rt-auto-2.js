@@ -5,43 +5,44 @@ rtAuto.load = (function(){
 		if ( rtAuto.num !== null && rtAuto.ele !== null && rtAuto.co !== null ) {
 			var countryC = true;
 			var $gMaps = new RegExp("gmaps","g");
-			var $clearOut = new RegExp("[^\\d]", "g");
+			var $clearOut = new RegExp("[^\\d]", "g"); // everything but numbers
+			// Check which countries regex to use
 			switch (rtAuto.co) {
-				case 'es':
+				case 'es': // spain (In progress)
 					var $country = new RegExp("([0-9]{2}( |-|\\.)?[0-9]{3}( |-|\\.)?[0-9]{2}( |-|\\.)?[0-9]{2})\\b|([0-9]{2,}( |-|\\.)?[0-9]{3,}( |-|\\.)?[0-9]{2,})\\b","g");
 					break;
-				case 'uk':
+				case 'uk': // uk (complete)
 					var $country = new RegExp("((\\+44|0([1-9]{1})[0-9]{1,})( \\(0\\)|\\(0\\)| |-|\\.)?[0-9]{2,}( |-|\\.)?[0-9]{2,}( |-|\\.)?[0-9]{2,})\\b|((\\(0|0)([1-9]{1})[0-9]{1,}(\\) | |-|\\.)?[0-9]{3,}( |-|\\.)?[0-9]{3,})\\b","g");
 					break;
-				case 'be':
+				case 'be': // belgium (In progress)
 					var $country = new RegExp("\\b0([1-9]{1})[0-9]{0,}( |)?[0-9]{2,3}( |)?[0-9]{2}( |)?[0-9]{2}\\b|\\b0([7-9]{1})[0-9]{1,}( |)?[0-9]{2,3}( |)?[0-9]{2,3}\\b","g");
 					break;
 				default:
 					countryC = false;
 					break;
 			}
-			if (countryC) {
-				var $rL = rtAuto.num;
+			if (countryC) { // if a regex has been found continue
+				var $rL = rtAuto.num; // grab all numbers and placeholder numbers
 				var $searchList = rtAuto.ele; // Where to search from, this can be a class, id or element e.g. body
 
 				var $AA=[]; // Active array for numbers found
-		    	var $cache = $("*").text();
+		    	var $cache = $("*").text(); // Grab everything across the entire page
 				var $remover = new RegExp("'num[^]*}", "g");
-				$cache = $cache.replace($remover, "");
-		    	var $allElements = $cache.match($country);
+				$cache = $cache.replace($remover, "");  // remove any numbers inject by the script using regex
+		    	var $allElements = $cache.match($country); // grab all numbers available in the document
 				if($allElements) { // checking elements have been found
 					$.each($allElements, function( key, value ) {
 						var $content = $allElements[key].replace($clearOut, '');
 						Object.keys($rL).forEach(function(key) { // get dest and rt num
-							var $num = key.split(' ').join(''), $rlK = $rL[key]; var $check = true;
+							var $num = key.replace($clearOut, ''), $rlK = $rL[key]; var $check = true;
 						    if($content == $num) {
 								if(jQuery.isEmptyObject($AA)) {
 									$AA.push({$tNum:$num, $rt:$rlK});
 								} else {
 									Object.keys($AA).forEach(function(key) {
 										if($AA[key].$tNum == $content) {
-										$check = false;
-									}
+											$check = false;
+										}
 									});
 								if($check === true) {
 									$AA.push({$tNum:$num, $rt:$rlK});
@@ -70,7 +71,6 @@ rtAuto.load = (function(){
         			}
 				});
 
-				var start = performance.now();
 				// Get all required numbers from the server
 				rTapNotifyDOMChange(document.getElementById("rt"));
 
@@ -78,7 +78,6 @@ rtAuto.load = (function(){
 				var $xRT = 0, $run = $checkExist.length*2, $ran = false;
 				$("#rt").bind("DOMSubtreeModified", function() {
 					$xRT++;
-					console.log("Element Change : "+(Math.round(performance.now() - start))+ "ms");
 					if($xRT>=$run && $ran === false) {
 						Object.keys($AA).forEach(function(key) {
             				var $catcher = $('.'+$AA[key].$rt+'').text();
@@ -94,7 +93,6 @@ rtAuto.load = (function(){
             				}
             			});
             			if($runCatch === true) {
-							console.log("Numbers Gathered For Deployment : "+(Math.round(performance.now() - start))+ "ms");
             				$finishAndReplace();
             				$ran = true;
             			}
@@ -124,7 +122,7 @@ rtAuto.load = (function(){
 							}
 						});
 					});
-					if (typeof rtAutoCallback == 'function') { rtAutoCallback(); }
+					if (typeof rtAutoCallback == 'function') { rtAutoCallback($AA); }
 				};
 			} else { window.console && console.log("Error: Country N/A");  }
 		} else { window.console && console.log("Error: Var Err"); }
