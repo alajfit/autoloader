@@ -4,6 +4,8 @@ rtAuto.load = (function(){
 		// Data from the customer
 		if ( rtAuto.num !== null && rtAuto.ele !== null && rtAuto.co !== null ) {
 			var countryC = true;
+			var $gMaps = new RegExp("gmaps","g");
+			var $clearOut = new RegExp("[^\\d]", "g");
 			switch (rtAuto.co) {
 				case 'es':
 					var $country = new RegExp("([0-9]{2}( |-|\\.)?[0-9]{3}( |-|\\.)?[0-9]{2}( |-|\\.)?[0-9]{2})\\b|([0-9]{2,}( |-|\\.)?[0-9]{3,}( |-|\\.)?[0-9]{2,})\\b","g");
@@ -29,7 +31,7 @@ rtAuto.load = (function(){
 		    	var $allElements = $cache.match($country);
 				if($allElements) { // checking elements have been found
 					$.each($allElements, function( key, value ) {
-						var $content = $allElements[key].split(' ').join('');
+						var $content = $allElements[key].replace($clearOut, '');
 						Object.keys($rL).forEach(function(key) { // get dest and rt num
 							var $num = key.split(' ').join(''), $rlK = $rL[key]; var $check = true;
 						    if($content == $num) {
@@ -76,6 +78,7 @@ rtAuto.load = (function(){
 				var $xRT = 0, $run = $checkExist.length*2, $ran = false;
 				$("#rt").bind("DOMSubtreeModified", function() {
 					$xRT++;
+					console.log("Element Change : "+(Math.round(performance.now() - start))+ "ms");
 					if($xRT>=$run && $ran === false) {
 						Object.keys($AA).forEach(function(key) {
             				var $catcher = $('.'+$AA[key].$rt+'').text();
@@ -105,10 +108,11 @@ rtAuto.load = (function(){
 						$($search).each(function() {
 							var $cache = $(this);
 							var $allElements = $cache.text().match($country);
-							if($allElements) { // checking elements have been found
+							var $catchGMaps = $cache.html().match($gMaps); // check for Google Maps
+							if($allElements && $catchGMaps === null) { // checking elements have been found and Google Maps is not within Scope
 								$.each($allElements, function( key, value ) {
 									var $replace = $allElements[key];
-									var $found = $allElements[key].split(' ').join('').split('.').join('');
+									var $found = $allElements[key].replace($clearOut, '');
 									Object.keys($AA).forEach(function(key) {
 										if($found == $AA[key].$tNum) {
 											var $re = new RegExp($replace,"g");
