@@ -8,8 +8,8 @@ rtAuto.load = (function(){
 			var $clearOut = new RegExp("[^\\d]", "g"); // everything but numbers
 			// Check which countries regex to use
 			switch (rtAuto.co) {
-				case 'es': // spain (In progress)
-					var $country = new RegExp("([0-9]{2}( |-|\\.)?[0-9]{3}( |-|\\.)?[0-9]{2}( |-|\\.)?[0-9]{2})\\b|([0-9]{2,}( |-|\\.)?[0-9]{3,}( |-|\\.)?[0-9]{2,})\\b","g");
+				case 'es': // spain (complete)
+					var $country = new RegExp("([6-9]{1}[0-9]{1,2}( |-|\\.)?[0-9]{2,3}( |-|\\.)?[0-9]{2}( |-|\\.)?[0-9]{2})\\b|([6-9]{1}[0-9]{1,2}( |-|\\.)?[0-9]{3,4}( |-|\\.)?[0-9]{3})\\b","g");
 					break;
 				case 'uk': // uk (complete)
 					var $country = new RegExp("((\\+44|0([1-9]{1})[0-9]{1,})( \\(0\\)|\\(0\\)| |-|\\.)?[0-9]{2,}( |-|\\.)?[0-9]{2,}( |-|\\.)?[0-9]{2,})\\b|((\\(0|0)([1-9]{1})[0-9]{1,}(\\) | |-|\\.)?[0-9]{3,}( |-|\\.)?[0-9]{3,})\\b","g");
